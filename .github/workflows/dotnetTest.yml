@@ -35,7 +35,7 @@ jobs:
       security-events: write
 
     steps:
-
-     - run: |
+    - name: dotnet commands
+      run: |
        dotnet --version
        msbuild
