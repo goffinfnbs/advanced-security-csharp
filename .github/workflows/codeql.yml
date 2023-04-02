@@ -63,7 +63,6 @@ jobs:
       if: ${{  matrix.language == 'csharp' }}
       uses: actions/setup-dotnet@v3
       with:
-        languages: ${{ matrix.language }}
         dotnet-version: |
           6.0.x
 
@@ -71,8 +70,6 @@ jobs:
     - name: Setup MSBuild.exe
       if: ${{  matrix.language == 'csharp' }}
       uses: microsoft/setup-msbuild@v1.0.2
-      with:
-        languages: ${{ matrix.language }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
