@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        language: ["${{ github.event.inputs.LANGUAGES }}"]
+        language: ${{ fromJSON(github.event.inputs.LANGUAGES) }}
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Use only 'java' to analyze code written in Java, Kotlin or both
         # Use only 'javascript' to analyze code written in JavaScript, TypeScript or both
@@ -60,7 +60,7 @@ jobs:
 
     # Install the .NET Core workload
     - name: Install .NET Core
-      if: ${{  matrix.language == 'csharp' }}
+      if: ${{ matrix.language == 'csharp' }}
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
@@ -68,7 +68,7 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      if: ${{  matrix.language == 'csharp' }}
+      if: ${{ matrix.language == 'csharp' }}
       uses: microsoft/setup-msbuild@v1.0.2
 
     # Initializes the CodeQL tools for scanning.
