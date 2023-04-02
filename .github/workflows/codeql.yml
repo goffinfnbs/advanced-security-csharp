@@ -64,8 +64,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
-          3.5.x
+          3.1.x
           6.0.x
+          7.0.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     # WINDOWS ONLY !
