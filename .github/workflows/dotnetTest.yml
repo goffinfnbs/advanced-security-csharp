@@ -1,0 +1,41 @@
+name: "dotnetTest"
+
+on:
+  workflow_dispatch:
+    inputs:
+      RUNNER_TYPE:
+        description: 'value for the runs-on arg'
+        required: true
+        type: choice
+        options:
+        - 'self-hosted'
+        - 'ubuntu-latest'
+        default: 'self-hosted'
+      LANGUAGES:
+        description: 'Languages to scan'
+        required: true
+        type: string
+        default: '["csharp", "javascript"]'
+
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    # The branches below must be a subset of the branches above
+#    branches: [ "main" ]
+#  schedule:
+#    - cron: '19 23 * * 5'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ["${{ github.event.inputs.RUNNER_TYPE }}"]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+
+     - run: |
+       dotnet --version
+       msbuild
