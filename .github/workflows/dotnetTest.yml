@@ -38,4 +38,4 @@ jobs:
     - name: dotnet commands
       run: |
        dotnet --version
-       msbuild
+       dotnet build --help
