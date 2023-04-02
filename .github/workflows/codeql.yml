@@ -59,14 +59,14 @@ jobs:
       uses: actions/checkout@v3
 
     # Install the .NET Core workload
-    - name: Install .NET Core
-      if: ${{ matrix.language == 'csharp' }}
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: |
-          3.1.x
-          6.0.x
-          7.0.x
+    #- name: Install .NET Core
+    #  if: ${{ matrix.language == 'csharp' }}
+    #  uses: actions/setup-dotnet@v3
+    #  with:
+    #    dotnet-version: |
+    #      3.1.x
+    #      6.0.x
+    #      7.0.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     # WINDOWS ONLY !
@@ -89,8 +89,8 @@ jobs:
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, Go, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-   # - name: Autobuild
-   #   uses: github/codeql-action/autobuild@v2
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -103,11 +103,11 @@ jobs:
     #     ./location_of_script_within_repo/buildscript.sh
 
 
-    - name: Install dotnet dependencies
-      run: dotnet restore
+    #- name: Install dotnet dependencies
+    #  run: dotnet restore
   
-    - name: dotnet Build
-      run: dotnet build --configuration Release --no-restore
+    #- name: dotnet Build
+    #  run: dotnet build --configuration Release --no-restore
       
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
