@@ -10,12 +10,13 @@ on:
         options:
         - 'self-hosted'
         - 'ubuntu-latest'
-        default: 'self-hosted'
+        default: 'ubuntu-latest'
       LANGUAGES:
         description: 'Languages to scan'
         required: true
         type: string
-        default: '["csharp", "javascript"]'
+        default: '["javascript"]'
+#        default: '["csharp", "javascript"]'
 
 #  push:
 #    branches: [ "main" ]
