@@ -1,0 +1,645 @@
+# Get code scanning anlysis for a repo using the REST API
+#
+
+curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_PAT}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses
+
+[
+  {
+    "ref": "refs/heads/code_scan_test1",
+    "commit_sha": "9c898ca65fd841419929e680cabc28f7f61afe3b",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "",
+    "created_at": "2023-04-17T15:30:05Z",
+    "results_count": 29,
+    "rules_count": 48,
+    "id": 79338814,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/79338814",
+    "sarif_id": "b9bf105c-dd34-11ed-8e9f-a370bed5cfa4",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/code_scan_test1",
+    "commit_sha": "9c898ca65fd841419929e680cabc28f7f61afe3b",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-17T15:29:39Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 79338704,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/79338704",
+    "sarif_id": "a8acb044-dd34-11ed-9932-9399da9d25b8",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  ...
+]
+
+# Get the LATEST result (this is OK if it is a SINGLE LANG scan not a MATRIX - there is nothing in the output that links the analysis for a matrix, they each have different run id's and created_at is not the same)
+#
+# and extract the results_count (the number of identified vulnerabilities)
+#
+
+ANALYSIS_JSON=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_PAT}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses);
+
+RESULT_COUNT=$(echo $ANALYSIS_JSON | jq -j '.[0].results_count');
+
+echo "RESULT_COUNT = $RESULT_COUNT";
+
+RESULT_COUNT = 29
+
+
+# Using the GH CLI
+
+ANALYSIS_JSON=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses);
+COMMIT_SHA=$(echo $ANALYSIS_JSON | jq -j '.[0].commit_sha');
+
+RUN_JSON=$(echo $ANALYSIS_JSON | jq -j --arg SHA "$COMMIT_SHA" '.[] | select(.commit_sha == $SHA)');
+
+RESULT_COUNT=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses | jq -j --arg SHA "$COMMIT_SHA" '.[] | select(.commit_sha == $SHA)');
+
+RUN_COUNTS=$(echo $RUN_JSON | jq -j '.results_count');
+
+echo "$RUN_COUNTS";
+29
+1
+
+
+
+jq -j --arg SHA "$COMMIT_SHA" '.[] | select(.commit_sha == $SHA)')
+
+.[] | select(.commit_sha == "9c898ca65fd841419929e680cabc28f7f61afe3b")
+
+RESULT_COUNT=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses | jq -j '.[0].results_count');
+
+echo "RESULT_COUNT = $RESULT_COUNT";
+
+RESULT_COUNT = 29
+
+
+
+[
+  {
+    "ref": "refs/heads/code_scan_test1",
+    "commit_sha": "9c898ca65fd841419929e680cabc28f7f61afe3b",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "",
+    "created_at": "2023-04-17T15:30:05Z",
+    "results_count": 29,
+    "rules_count": 48,
+    "id": 79338814,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/79338814",
+    "sarif_id": "b9bf105c-dd34-11ed-8e9f-a370bed5cfa4",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/code_scan_test1",
+    "commit_sha": "9c898ca65fd841419929e680cabc28f7f61afe3b",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-17T15:29:39Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 79338704,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/79338704",
+    "sarif_id": "a8acb044-dd34-11ed-9932-9399da9d25b8",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-14T10:26:43Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 78829635,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/78829635",
+    "sarif_id": "d99fc5de-daae-11ed-8271-bb76de454895",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-14T10:26:05Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 78829523,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/78829523",
+    "sarif_id": "c22b84a6-daae-11ed-88c8-431f0e780fee",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-13T09:56:28Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 78552939,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/78552939",
+    "sarif_id": "7508d1f6-d9e1-11ed-90a3-57256fa810ca",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-12T11:57:34Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 78302929,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/78302929",
+    "sarif_id": "34ca76fc-d929-11ed-90bc-50655e78b04e",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "",
+    "created_at": "2023-04-06T16:10:03Z",
+    "results_count": 29,
+    "rules_count": 48,
+    "id": 77252719,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77252719",
+    "sarif_id": "7c8fb9b8-d495-11ed-85db-3384fd48dd24",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-06T16:09:45Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 77252634,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77252634",
+    "sarif_id": "7229894a-d495-11ed-8ba3-9496933a0e6f",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-06T16:04:48Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 77251390,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77251390",
+    "sarif_id": "c1330cce-d494-11ed-9e93-c95c5b39639b",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-06T14:50:34Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 77232943,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77232943",
+    "sarif_id": "61ce2f34-d48a-11ed-996e-3c09385dbf38",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "",
+    "created_at": "2023-04-06T14:39:50Z",
+    "results_count": 29,
+    "rules_count": 48,
+    "id": 77230299,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77230299",
+    "sarif_id": "e1758bb2-d488-11ed-9cd0-3de8dfd4f540",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-06T14:39:39Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 77230259,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77230259",
+    "sarif_id": "dbd90c7e-d488-11ed-8247-7f028c7a6787",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/code_scan_test1",
+    "commit_sha": "d1f549ba329c013571544542c14341542d1d0fd4",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-06T14:37:17Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 77229698,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77229698",
+    "sarif_id": "869fcfe0-d488-11ed-943a-a8ebceaa02e0",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "unsuccessful execution, exit code: 0, description:  ",
+    "created_at": "2023-04-06T14:28:31Z",
+    "results_count": 0,
+    "rules_count": 0,
+    "id": 77227720,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77227720",
+    "sarif_id": "4db8cdcc-d487-11ed-95c2-4371dfa4c110",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "22b41375105eb9a1846ee1ee71a6abb36f605221",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-06T14:27:43Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 77227497,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/77227497",
+    "sarif_id": "3082a796-d487-11ed-8265-921b1673cebe",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.6"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "d0626445658357adc95f8fbe23138b10fff552b6",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-03T15:32:51Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 76426045,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76426045",
+    "sarif_id": "cafb5be2-d234-11ed-9be5-8dba002b4ae7",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "d0626445658357adc95f8fbe23138b10fff552b6",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-03T15:11:28Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 76420520,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76420520",
+    "sarif_id": "ce56629e-d231-11ed-94d1-714d633dbe72",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "d0626445658357adc95f8fbe23138b10fff552b6",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "",
+    "created_at": "2023-04-02T16:34:56Z",
+    "results_count": 29,
+    "rules_count": 48,
+    "id": 76228069,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76228069",
+    "sarif_id": "4ccda6be-d174-11ed-8f25-937299a8a040",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "d0626445658357adc95f8fbe23138b10fff552b6",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-02T16:34:15Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 76228014,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76228014",
+    "sarif_id": "34732814-d174-11ed-9c12-5f49f648cd35",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": false,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "bfb58a99d9c54f2f274a3ee3467fe6e9ae517e57",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "unsuccessful execution, exit code: 0, description:  ",
+    "created_at": "2023-04-02T16:24:10Z",
+    "results_count": 0,
+    "rules_count": 0,
+    "id": 76227493,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76227493",
+    "sarif_id": "cbf6f6ae-d172-11ed-9093-7692315e761c",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "06371cbc71b9e1d290eff11322e249a4eee27e5e",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "unsuccessful execution, exit code: 0, description:  ",
+    "created_at": "2023-04-02T16:06:08Z",
+    "results_count": 0,
+    "rules_count": 0,
+    "id": 76226686,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76226686",
+    "sarif_id": "47220b64-d170-11ed-8474-62ffa32a5152",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "555e0bca91a408cdb856b5e9970ff9588d5e4dc0",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "unsuccessful execution, exit code: 0, description:  ",
+    "created_at": "2023-04-02T15:57:29Z",
+    "results_count": 0,
+    "rules_count": 0,
+    "id": 76226150,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76226150",
+    "sarif_id": "11390418-d16f-11ed-851e-22dbd97cd724",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "ac1fd3b76c4b818e564d30e5fdc7f8718028f117",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "unsuccessful execution, exit code: 0, description:  ",
+    "created_at": "2023-04-02T15:51:32Z",
+    "results_count": 0,
+    "rules_count": 0,
+    "id": 76225829,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76225829",
+    "sarif_id": "3c44bac2-d16e-11ed-930b-a71a2a34e482",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "245ab8fdcdd382d2215af5ec58f623748ab40877",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"csharp\"}",
+    "category": "/language:csharp",
+    "error": "unsuccessful execution, exit code: 0, description:  ",
+    "created_at": "2023-04-02T15:39:43Z",
+    "results_count": 0,
+    "rules_count": 0,
+    "id": 76224861,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76224861",
+    "sarif_id": "9591362a-d16c-11ed-8cda-a1b1962e6e45",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": true,
+    "warning": ""
+  },
+  {
+    "ref": "refs/heads/main",
+    "commit_sha": "0246d749a717716b98882216c7efc08f848cd92e",
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "environment": "{\"language\":\"javascript\"}",
+    "category": "/language:javascript",
+    "error": "",
+    "created_at": "2023-04-02T15:34:31Z",
+    "results_count": 1,
+    "rules_count": 86,
+    "id": 76224548,
+    "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/76224548",
+    "sarif_id": "db78561a-d16b-11ed-8aca-bbfce8e7296f",
+    "tool": {
+      "name": "CodeQL",
+      "guid": null,
+      "version": "2.12.5"
+    },
+    "deletable": false,
+    "warning": ""
+  }
+]
+
+
+goffinf@W5CG01418CY:/c/Data/cicd/code-scanning/advanced-security-csharp/scripts$ gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/79338814
+{
+  "ref": "refs/heads/code_scan_test1",
+  "commit_sha": "9c898ca65fd841419929e680cabc28f7f61afe3b",
+  "analysis_key": ".github/workflows/codeql.yml:analyze",
+  "environment": "{\"language\":\"csharp\"}",
+  "category": "/language:csharp",
+  "error": "",
+  "created_at": "2023-04-17T15:30:05Z",
+  "results_count": 29,
+  "rules_count": 48,
+  "id": 79338814,
+  "url": "https://api.github.com/repos/goffinfnbs/advanced-security-csharp/code-scanning/analyses/79338814",
+  "sarif_id": "b9bf105c-dd34-11ed-8e9f-a370bed5cfa4",
+  "tool": {
+    "name": "CodeQL",
+    "guid": null,
+    "version": "2.12.6"
+  },
+  "deletable": true,
+  "warning": ""
+}
