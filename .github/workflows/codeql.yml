@@ -35,7 +35,7 @@ jobs:
     name: Analyze
     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ["${{ inputs.RUNNER_TYPE }}"]
-    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'push' }} || ${{ github.event_name == 'pull_request' }}
     runs-on: 'ubuntu-latest'
     permissions:
       actions: read
@@ -47,7 +47,7 @@ jobs:
       matrix:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         language: ${{ fromJSON(inputs.LANGUAGES) }}
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'push' }} || ${{ github.event_name == 'pull_request' }}
         language: ['csharp', 'javascript']
     steps:
     - name: Checkout repository
