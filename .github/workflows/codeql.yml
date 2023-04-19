@@ -45,9 +45,9 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-      if: {{ github.event_name == 'workflow_dispatch' }}
+        if: {{ github.event_name == 'workflow_dispatch' }}
         language: ${{ fromJSON(inputs.LANGUAGES) }}
-      if: {{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: {{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         language: ['csharp', 'javascript']
     steps:
     - name: Checkout repository
