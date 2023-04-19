@@ -18,11 +18,11 @@ on:
         default: '["javascript"]'
 #        default: '["csharp", "javascript"]'
 
-#  push:
-#    branches: [ "main" ]
-#  pull_request:
-#    # The branches below must be a subset of the branches above
-#    branches: [ "main" ]
+  push:
+    branches: [ "main", "code_scan_test1" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main", "code_scan_test1" ]
 #  schedule:
 #    - cron: '19 23 * * 5'
 
