@@ -33,7 +33,10 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ["${{ github.event.inputs.RUNNER_TYPE }}"]
+    if: {{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ["${{ inputs.RUNNER_TYPE }}"]
+    if: {{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+    runs-on: 'ubuntu-latest'
     permissions:
       actions: read
       contents: read
@@ -41,8 +44,11 @@ jobs:
 
     strategy:
       fail-fast: true
+      if: {{ github.event_name == 'workflow_dispatch' }}
       matrix:
-        language: ${{ fromJSON(github.event.inputs.LANGUAGES) }}
+        language: ${{ fromJSON(inputs.LANGUAGES) }}
+      if: {{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        language: ['csharp', 'javascript']
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
